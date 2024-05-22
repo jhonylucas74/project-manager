@@ -36,6 +36,7 @@ pip-wheel-metadata/
 db.sqlite3
 /media
 /staticfiles
+uploads/
 staticfiles/
 logs/
 # Translations
