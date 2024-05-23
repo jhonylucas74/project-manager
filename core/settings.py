@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'drf_yasg',
     'authentication',
     'project_manager'
 ]
@@ -139,3 +140,5 @@ PAGE_SIZE = 20
 
 MEDIA_URL = '/uploads/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads/')
+
+LOGIN_URL = 'admin:login'

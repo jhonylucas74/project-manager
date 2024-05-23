@@ -3,13 +3,22 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import generics, pagination
 from rest_framework import status
-from .serializers import FileSerializer, DocumentSerializer, ProjectSerializer
+from .serializers import FileSerializer, DocumentSerializer, ProjectSerializer, PaginatedDocumentSerializer
 from .models import Document, Project
 from django.conf import settings
+from drf_yasg.utils import swagger_auto_schema
 
 class DocumentUploadListView(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
+    @swagger_auto_schema(
+        request_body=FileSerializer,
+        responses={
+            status.HTTP_201_CREATED: DocumentSerializer,
+            status.HTTP_400_BAD_REQUEST: 'Bad Request',
+            status.HTTP_404_NOT_FOUND: 'Project not found'
+        }
+    )
     def post(self, request, *args, **kwargs):
         serializer = FileSerializer(data=request.data)
 
@@ -35,6 +44,11 @@ class DocumentUploadListView(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @swagger_auto_schema(
+        responses={
+            status.HTTP_200_OK: PaginatedDocumentSerializer
+        }
+    )
     def get(self, request, *args, **kwargs):
         paginator = pagination.PageNumberPagination()
         paginator.page_size = settings.PAGE_SIZE 
