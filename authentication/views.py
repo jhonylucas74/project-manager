@@ -16,7 +16,7 @@ class UserSignUp(APIView):
 	@swagger_auto_schema(
         request_body=SignUpSerializer,
         responses={
-			status.HTTP_200_OK: TokenSerializer
+			status.HTTP_201_CREATED: TokenSerializer
 		}
     )
 	def post(self, request):
@@ -37,7 +37,7 @@ class UserSignUp(APIView):
 			"user": CustomUserSerializer(user).data
 		})
 
-		return Response(token_serializer.data, status=status.HTTP_200_OK)
+		return Response(token_serializer.data, status=status.HTTP_201_CREATED)
 
 class UserSignIn(APIView):
 	permission_classes = [AllowAny]

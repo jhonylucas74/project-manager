@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import generics, pagination
 from rest_framework import status
-from .serializers import FileSerializer, DocumentSerializer, ProjectSerializer, PaginatedDocumentSerializer
+from .serializers import FileSerializer, DocumentSerializer, ProjectSerializer, PaginatedDocumentSerializer, DocumentDetailSerializer
 from .models import Document, Project
 from django.conf import settings
 from drf_yasg.utils import swagger_auto_schema
@@ -61,7 +61,7 @@ class DocumentUploadListView(APIView):
 
 class DocumentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Document.objects.all()
-    serializer_class = DocumentSerializer
+    serializer_class = DocumentDetailSerializer
 
 class ProjectListCreateAPIView(generics.ListCreateAPIView):
     queryset = Project.objects.all()

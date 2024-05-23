@@ -10,6 +10,14 @@ class DocumentSerializer(serializers.ModelSerializer):
         model = Document
         fields = '__all__'
 
+class DocumentDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Document
+        fields = '__all__'
+        extra_kwargs = {
+            'file': {'required': False}
+        }
+
 class ProjectSerializer(serializers.ModelSerializer):
     documents = DocumentSerializer(many=True, read_only=True)
 
