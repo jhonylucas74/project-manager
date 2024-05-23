@@ -7,8 +7,10 @@ from .serializers import FileSerializer, DocumentSerializer, ProjectSerializer, 
 from .models import Document, Project
 from django.conf import settings
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.permissions import IsAuthenticated
 
 class DocumentUploadListView(APIView):
+    permission_classes = [IsAuthenticated]
     parser_classes = (MultiPartParser, FormParser)
 
     @swagger_auto_schema(
@@ -62,13 +64,16 @@ class DocumentUploadListView(APIView):
 class DocumentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Document.objects.all()
     serializer_class = DocumentDetailSerializer
+    permission_classes = [IsAuthenticated]
 
 class ProjectListCreateAPIView(generics.ListCreateAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     pagination_class = pagination.PageNumberPagination
     pagination_class.page_size = settings.PAGE_SIZE
+    permission_classes = [IsAuthenticated]
 
 class ProjectRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticated]
