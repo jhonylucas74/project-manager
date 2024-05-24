@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import DocumentUploadListView, ProjectListCreateAPIView, ProjectRetrieveUpdateDestroyAPIView, DocumentRetrieveUpdateDestroyAPIView
+from .views import DocumentUploadListView, ProjectListCreateAPIView, ProjectRetrieveUpdateDestroyAPIView, DocumentRetrieveUpdateDestroyAPIView, ProjectSearchAPIView
 
 urlpatterns = [
     path('documents/upload/', DocumentUploadListView.as_view(), name='document-upload'),
@@ -7,4 +7,5 @@ urlpatterns = [
     path('documents/<int:pk>/', DocumentRetrieveUpdateDestroyAPIView.as_view(), name='document-detail'),
     path('projects/', ProjectListCreateAPIView.as_view(), name='project-list-create'),
     path('projects/<int:pk>/', ProjectRetrieveUpdateDestroyAPIView.as_view(), name='project-detail'),
+    path('projects/search/', ProjectSearchAPIView.as_view(), name='project-search'),
 ]

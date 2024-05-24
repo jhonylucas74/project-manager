@@ -5,7 +5,7 @@ class Status(models.TextChoices):
     TODO = 'todo', 'To Do'
     DOING = 'doing', 'Doing'
     DONE = 'done', 'Done'
-    BLOCKED = 'blocker', 'Blocked'
+    BLOCKED = 'blocked', 'Blocked'
     ARCHIVED = 'archived', 'Archived'
 
 class Document(models.Model):
