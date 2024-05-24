@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import Group
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 class CustomUserManager(BaseUserManager):
@@ -10,6 +11,9 @@ class CustomUserManager(BaseUserManager):
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
+        # Add the user to the Member group
+        member_group = Group.objects.get(name='Member')
+        user.groups.add(member_group)
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
@@ -33,3 +37,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+    
+    class Meta:
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
