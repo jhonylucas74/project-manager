@@ -110,3 +110,7 @@ Every new user is associated with the Member role. To change any user's role, pl
 - Member: Can view everything but is not able to edit, create, or delete.
 
 Everyone can upload documents to the projects.
+
+## Database schema
+
+Check this [doc](docs/database_diagram.md).
