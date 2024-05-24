@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import generics, pagination
 from rest_framework import status
-from .serializers import FileSerializer, DocumentSerializer, ProjectSerializer, PaginatedDocumentSerializer, DocumentDetailSerializer
-from .models import Document, Project, Status
+from .serializers import FileSerializer, DocumentSerializer, ProjectSerializer, PaginatedDocumentSerializer, DocumentDetailSerializer, MilestoneSerializer, TaskSerializer, UpdateMilestoneSerializer, UpdateTaskSerializer
+from .models import Document, Project, Status, Milestone, Task
 from django.conf import settings
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import IsAuthenticated
@@ -77,7 +77,7 @@ class ProjectListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated, ProjectPermission]
 
     def get_queryset(self):
-        queryset = Project.objects.all()
+        queryset = Project.objects.all().prefetch_related('documents', 'milestones', 'tasks')
         queryset = queryset.order_by('-created_at')
         return queryset
 
@@ -120,6 +120,43 @@ class ProjectSearchAPIView(APIView):
 
             projects = projects.filter(created_at__gte=since)
 
+        projects = projects.prefetch_related('documents', 'milestones', 'tasks')
         projects = projects.order_by('-created_at')
         serializer = ProjectSerializer(projects, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class MilestoneListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = MilestoneSerializer
+    pagination_class = pagination.PageNumberPagination
+    pagination_class.page_size = settings.PAGE_SIZE
+    # Using the same permission class from Project
+    permission_classes = [IsAuthenticated, ProjectPermission]
+
+    def get_queryset(self):
+        queryset = Milestone.objects.all()
+        queryset = queryset.order_by('-created_at')
+        return queryset
+
+class MilestoneRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Milestone.objects.all()
+    serializer_class = UpdateMilestoneSerializer
+    # Using the same permission class from Project
+    permission_classes = [IsAuthenticated, ProjectPermission]
+
+class TaskListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = TaskSerializer
+    pagination_class = pagination.PageNumberPagination
+    pagination_class.page_size = settings.PAGE_SIZE
+    # Task does not have a explicit permission class, just using IsAuthenticated
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = Task.objects.all()
+        queryset = queryset.order_by('-created_at')
+        return queryset
+
+class TaskRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Task.objects.all()
+    serializer_class = UpdateTaskSerializer
+    # Task does not have a explicit permission class, just using IsAuthenticated
+    permission_classes = [IsAuthenticated]

@@ -14,7 +14,8 @@ class DocumentProjectCRUDTests(TestCase):
         self.user_data = {
             'email': 'test@example.com',
             'password': 'testpassword',
-            'name': 'Test User'
+            'name': 'Test User',
+            'is_superuser': True,
         }
         self.user = CustomUser.objects.create_user(**self.user_data)
         refresh = RefreshToken.for_user(self.user)
@@ -25,7 +26,7 @@ class DocumentProjectCRUDTests(TestCase):
         project = Project.objects.create(**self.project_data)
 
         # Create Document
-        with open('readme.md', 'rb') as file:
+        with open('README.md', 'rb') as file:
             document_data = { 'project_id': project.id, 'file': file }
             create_response = self.client.post(reverse('document-list-create'), document_data, format='multipart', headers=self.headers)
             self.assertEqual(create_response.status_code, status.HTTP_201_CREATED)
@@ -63,4 +64,51 @@ class DocumentProjectCRUDTests(TestCase):
 
         # Delete Project
         delete_response = self.client.delete(reverse('project-detail', args=[project_id]), headers=self.headers)
+        self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_milestone_crud(self):
+        # Create Project
+        project = Project.objects.create(**self.project_data)
+
+        # Create Milestone
+        create_response = self.client.post(reverse('milestone-list-create'), {'name': 'Test Milestone', 'project': project.id}, format='json', headers=self.headers)
+        self.assertEqual(create_response.status_code, status.HTTP_201_CREATED)
+        milestone_id = create_response.data['id']
+
+        # Retrieve Milestone
+        retrieve_response = self.client.get(reverse('milestone-detail', args=[milestone_id]), headers=self.headers)
+        self.assertEqual(retrieve_response.status_code, status.HTTP_200_OK)
+
+        # Update Milestone
+        updated_milestone_data = {'name': 'Updated Milestone', 'description': 'Updated Description'}
+        update_response = self.client.put(reverse('milestone-detail', args=[milestone_id]), updated_milestone_data, format='json', headers=self.headers)
+        self.assertEqual(update_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(update_response.data['name'], updated_milestone_data['name'])
+
+        # Delete Milestone
+        delete_response = self.client.delete(reverse('milestone-detail', args=[milestone_id]), headers=self.headers)
+        self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_task_crud(self):
+        # Create Project
+        project = Project.objects.create(**self.project_data)
+
+        # Create Task
+        create_response = self.client.post(reverse('task-list-create'), {'name': 'Test Task', 'project': project.id}, format='json', headers=self.headers)
+        self.assertEqual(create_response.status_code, status.HTTP_201_CREATED)
+        task_id = create_response.data['id']
+
+        # Retrieve Task
+        retrieve_response = self.client.get(reverse('task-detail', args=[task_id]), headers=self.headers)
+        self.assertEqual(retrieve_response.status_code, status.HTTP_200_OK)
+
+        # Update Task
+        updated_task_data = {'name': 'Updated Task', 'description': 'Updated Description'}
+        update_response = self.client.put(reverse('task-detail', args=[task_id]), updated_task_data, format='json', headers=self.headers)
+        print(update_response.data)
+        self.assertEqual(update_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(update_response.data['name'], updated_task_data['name'])
+
+        # Delete Task
+        delete_response = self.client.delete(reverse('task-detail', args=[task_id]), headers=self.headers)
         self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
