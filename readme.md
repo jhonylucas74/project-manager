@@ -114,3 +114,17 @@ Everyone can upload documents to the projects.
 ## Database schema
 
 Check this [doc](docs/database_diagram.md).
+
+## This Project Architecture
+
+This Django app is divided into apps: authentication, core, and project_manager. The core app is the entry point; all the settings, database configurations, and the main URL sources are focused there. It doesn't have any business logic or anything else; just as the name suggests, it is the "core" of this web app. The authentication module is responsible for containing all the authentication logic, including the user model and the endpoints for authentication and related functionalities. The project_manager app is responsible for all the app's final logic, including the project and document models, as well as other models related to the app's functionality. Having different apps helps this app keep what is important in its own context, making it easier to extend current features and even reuse things in the future.
+
+Also, this project uses Django's REST framework to create all the endpoints, leveraging the REST framework serializers. All the resources are provided through a REST API, and using drf_yasg, Swagger is enabled by default with the possibility of extension to clarify and enrich the generated documentation.
+
+## Running the tests
+
+All the apps except the core have tests. To run them, just type:
+
+```bash
+python3 manage.py test
+```
